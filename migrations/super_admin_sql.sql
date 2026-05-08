@@ -1,0 +1,60 @@
+create table admins(
+ user_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ user_name varchar(100) NOT NULL,
+ user_email varchar(100) NOT NULL,
+ created_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+)
+
+-- drop table admins
+
+-- insert into admins (user_name,user_email) values ('Sameer Shaik', 'sameer12k@gmail.com')
+
+-- select * from admins
+
+CREATE OR REPLACE FUNCTION CreateNewAdmin(
+  p_user_name  TEXT,
+  p_user_email TEXT
+)
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+  -- 1. Null / empty checks
+  IF p_user_name IS NULL OR TRIM(p_user_name) = '' THEN
+    RAISE EXCEPTION 'user_name cannot be empty';
+  END IF;
+
+  IF p_user_email IS NULL OR TRIM(p_user_email) = '' THEN
+    RAISE EXCEPTION 'user_email cannot be empty';
+  END IF;
+
+  -- 2. Basic email format check
+  IF p_user_email NOT LIKE '%_@_%.__%' THEN
+    RAISE EXCEPTION 'Invalid email format: %', p_user_email;
+  END IF;
+
+  -- 3. Duplicate email check
+  IF EXISTS (
+    SELECT 1 FROM admins WHERE user_email = LOWER(TRIM(p_user_email))
+  ) THEN
+    RAISE EXCEPTION 'Email already exists: %', p_user_email;
+  END IF;
+
+  -- 4. Insert with cleaned values
+  INSERT INTO admins (user_name, user_email)
+  VALUES (
+    TRIM(p_user_name),
+    LOWER(TRIM(p_user_email))
+  );
+
+  RAISE NOTICE 'Admin created successfully: %', p_user_name;
+
+END;
+$$;
+
+
+SELECT CreateNewAdmin('SHAIK SAMEER','SAMEER12K@GMAIL.COM')
+
+SELECT * FROM admins;

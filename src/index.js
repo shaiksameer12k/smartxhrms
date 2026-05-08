@@ -1,0 +1,45 @@
+import express from "express";
+import { envconfig } from "./config/env.js";
+import { db_connection } from "./config/DB/DB_Connection.js";
+import adminRoutes from "./modules/admin/admin.route.js";
+import cors from "cors";
+// swagger
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "../swagger.js";
+import errorMiddleware from "./utils/errormiddleware.js";
+import preonboardingRouter from "./modules/preonboarding/onboarding.route.js";
+import {
+  mailQue,
+  mailservices_que,
+  runAndVerifyQue,
+} from "./utils/Ques/mailservices_que.js";
+
+const port = envconfig()?.PORT || 5000;
+const app = express();
+export const pool = db_connection();
+
+app.use(cors());
+app.use(express.json());
+
+if (mailQue?.length > 0) {
+  runAndVerifyQue();
+}
+
+console.log("mailQue", mailQue);
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// routes
+app.use("/api/v1", adminRoutes);
+app.use("/api/v1", preonboardingRouter);
+
+app.get("/", (req, res) => {
+  return res.send("Hello Bro");
+});
+
+// error middleware
+app.use(errorMiddleware);
+
+app.listen(port, () => {
+  console.log(`Successfully Server is Running PORT http://localhost:${port}`);
+});
