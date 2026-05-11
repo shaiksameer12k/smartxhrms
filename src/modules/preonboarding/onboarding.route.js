@@ -30,7 +30,7 @@ const router = new Router();
 
 /**
  * @swagger
- * /api/v1/onboarding:
+ * /api/v1/admin/onboarding:
  *   get:
  *     summary: Get all onboarding list
  *     tags: [PreOnboarding]
@@ -47,7 +47,7 @@ const router = new Router();
  *         description: Internal server error
  */
 
-router.get("/onboarding", getonboardingList);
+router.get("/admin/onboarding", getonboardingList);
 
 /**
  * @swagger
@@ -95,7 +95,7 @@ router.get("/onboarding", getonboardingList);
 
 /**
  * @swagger
- * /api/v1/onboarding:
+ * /api/v1/admin/onboarding:
  *   post:
  *     summary: Trigger onboarding Employee
  *
@@ -171,7 +171,7 @@ router.post("/onboarding", postonboardingList);
 
 /**
  * @swagger
- * /api/v1/onboarding/{trigger_emp_id}:
+ * /api/v1/employee/onboarding/{trigger_emp_id}:
  *   get:
  *     summary: Get full onboarding details for a specific employee
  *     tags: [PreOnboarding]
@@ -266,6 +266,6 @@ router.post("/onboarding", postonboardingList);
  *         description: Internal server error
  */
 
-router.get("/onboarding/:trigger_emp_id", getonboardingEmpFullDetails);
+router.get("/employee/onboarding/:trigger_emp_id", getonboardingEmpFullDetails);
 
 export default router;
