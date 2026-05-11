@@ -6,11 +6,6 @@ create table admins(
  updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 
--- drop table admins
-
--- insert into admins (user_name,user_email) values ('Sameer Shaik', 'sameer12k@gmail.com')
-
--- select * from admins
 
 CREATE OR REPLACE FUNCTION CreateNewAdmin(
   p_user_name  TEXT,
@@ -55,6 +50,31 @@ END;
 $$;
 
 
-SELECT CreateNewAdmin('SHAIK SAMEER','SAMEER12K@GMAIL.COM')
+CREATE OR REPLACE FUNCTION deleteAdminUser(
+    p_user_id INTEGER
+)
+RETURNS VOID
+LANGUAGE plpgsql
+AS $$
+BEGIN
 
-SELECT * FROM admins;
+    IF p_user_id IS NULL THEN
+        RAISE EXCEPTION 'user_id is missing';
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM admins
+        WHERE user_id = p_user_id
+    ) THEN
+        RAISE EXCEPTION 'Invalid user_id';
+    END IF;
+
+    DELETE FROM admins
+    WHERE user_id = p_user_id;
+
+END;
+$$;
+
+
+
