@@ -13,6 +13,8 @@ import {
   mailservices_que,
   runAndVerifyQue,
 } from "./utils/Ques/mailservices_que.js";
+import { redis } from "./config/redis.js";
+import authRoutes from "./modules/auth/auth.routes.js";
 
 const port = envconfig()?.PORT || 5000;
 const app = express();
@@ -25,13 +27,15 @@ if (mailQue?.length > 0) {
   runAndVerifyQue();
 }
 
-console.log("mailQue", mailQue);
-
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // routes
+
+app.use("/api/v1", authRoutes);
 app.use("/api/v1", adminRoutes);
 app.use("/api/v1", preonboardingRouter);
+
+
 
 app.get("/", (req, res) => {
   return res.send("Hello Bro");
@@ -43,6 +47,3 @@ app.use(errorMiddleware);
 app.listen(port, () => {
   console.log(`Successfully Server is Running PORT http://localhost:${port}`);
 });
-
-
-// test
