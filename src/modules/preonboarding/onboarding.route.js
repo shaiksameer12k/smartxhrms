@@ -1,6 +1,12 @@
-import {getonboardingEmpFullDetails, getonboardingList, postonboardingList} from "./onboarding.controller.js";
+import { authjwtmiddleware } from "../../middlewares/jwt/auth_middleware.js";
+import { ratelimiter_middleware } from "../../middlewares/ratelimeter.js";
+import {
+  getonboardingEmpFullDetails,
+  getonboardingList,
+  postonboardingList,
+} from "./onboarding.controller.js";
 
-import {Router} from "express";
+import { Router } from "express";
 
 const router = new Router();
 
@@ -47,7 +53,12 @@ const router = new Router();
  *         description: Internal server error
  */
 
-router.get("/admin/onboarding", getonboardingList);
+router.get(
+  "/admin/onboarding",
+  authjwtmiddleware,
+  ratelimiter_middleware,
+  getonboardingList,
+);
 
 /**
  * @swagger
