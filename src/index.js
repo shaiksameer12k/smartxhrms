@@ -6,7 +6,7 @@ import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "../swagger.js";
 import errorMiddleware from "./utils/errormiddleware.js";
-import preonboardingRouter from "./modules/preonboarding/onboarding.route.js";
+import preonboardingRoutes from "./modules/preonboarding/onboarding.route.js";
 import {
   mailQue,
   mailservices_que,
@@ -21,6 +21,7 @@ import {
 } from "./middlewares/jwt/jwt_token.js";
 import { authjwtmiddleware } from "./middlewares/jwt/auth_middleware.js";
 import cookieParser from "cookie-parser";
+import userRoutes from "./modules/users/users.routes.js";
 
 const port = envconfig()?.PORT || 5000;
 const app = express();
@@ -29,7 +30,6 @@ export const pool = db_connection();
 app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
-
 
 if (mailQue?.length > 0) {
   runAndVerifyQue();
@@ -40,7 +40,8 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // routes
 app.use("/api/v1", authRoutes);
 app.use("/api/v1", adminRoutes);
-app.use("/api/v1", preonboardingRouter);
+app.use("/api/v1", preonboardingRoutes);
+app.use("/api/v1", userRoutes);
 
 app.get("/", (req, res) => {
   return res.send("Hello Bro");

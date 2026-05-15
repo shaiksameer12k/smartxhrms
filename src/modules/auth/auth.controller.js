@@ -82,6 +82,7 @@ export const send_otp = async (req, res) => {
 export const verify_otp = async (req, res) => {
     try {
         const {key, otp, user_name} = req.body;
+        
         const request_ip = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress || "unknown";
 
         if (!key || !otp) {
